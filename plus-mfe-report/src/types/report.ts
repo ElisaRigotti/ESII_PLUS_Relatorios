@@ -22,6 +22,15 @@ export interface StockMovementSummary {
   saldoAtual: number;
 }
 
+export interface ReportSummary {
+  totalSales: number;
+  totalOrders: number;
+  totalItemsSold: number;
+  averageTicket: number;
+  totalStockIn: number;
+  totalStockOut: number;
+}
+
 export type ReportType = "sales-by-category" | "sales-by-size" | "stock-movements";
 export type ExportFormat = "csv" | "json" | "pdf";
 

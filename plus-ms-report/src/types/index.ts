@@ -1,63 +1,155 @@
-import express from 'express';
-import cors from 'cors';
-import swaggerUi from 'swagger-ui-express';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { config } from './config';
-import reportRoutes from './routes/report.routes';
+// ========================================
+// Tipos do MS7 — Order Service (Grupo 8)
+// Baseado em: openapi/openapi.yaml do plus-ms-ped
+// ========================================
 
-const app = express();
+export type OrderType = 'PURCHASE' | 'SALE';
+export type OrderStatus = 'DRAFT' | 'RESERVED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
 
-app.use(express.json());
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:4001',
-    'http://localhost:4009',
-    'http://127.0.0.1:3000',
-  ],
-  credentials: true,
-}));
-
-// Health check (sem auth, conforme padrão da turma)
-app.get('/health', (_req, res) => {
-  res.status(200).json({ status: 'ok', service: 'plus-ms-report' });
-});
-
-// Rotas de relatório
-app.use('/reports', reportRoutes);
-
-// Swagger UI — documentação interativa da API
-try {
-  const openapiPath = join(__dirname, '..', 'openapi', 'openapi.yaml');
-  const openapiContent = readFileSync(openapiPath, 'utf-8');
-
-  // Parse YAML manualmente (sem dependência extra) — swagger-ui-express
-  // aceita string YAML diretamente via setup option
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(undefined, {
-    swaggerOptions: {
-      url: '/openapi.yaml',
-    },
-  }));
-
-  // Servir o arquivo YAML bruto para o Swagger UI consumir
-  app.get('/openapi.yaml', (_req, res) => {
-    res.setHeader('Content-Type', 'text/yaml');
-    res.send(openapiContent);
-  });
-} catch {
-  console.warn('Swagger: openapi.yaml não encontrado, /docs desabilitado');
+export interface OrderItem {
+  id: string;
+  productVariantId: string; // Referência à variante (cor+tamanho) do MS1
+  quantity: number;
 }
 
-// Rota raiz redireciona para docs
-app.get('/', (_req, res) => {
-  res.redirect('/docs');
-});
+export interface Order {
+  id: string;
+  type: OrderType;
+  status: OrderStatus;
+  items: OrderItem[];
+  supplierRef?: string | null;
+  notes?: string | null;
+  createdBy: string;        // Email do criador (claim sub do JWT)
+  reservedAt?: string | null;
+  confirmedAt?: string | null;
+  completedAt?: string | null;
+  cancelledAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
 
-app.listen(config.port, () => {
-  console.log(`MS Report running at http://localhost:${config.port}`);
-  console.log(`Swagger UI: http://localhost:${config.port}/docs`);
-  console.log(`Mode: ${config.useMocks ? 'MOCK' : 'LIVE'}`);
-});
+export interface OrderListResponse {
+  data: Order[];
+  page: number;
+  pageSize: number;
+  total: number;
+}
 
-export { app };
+// ========================================
+// Tipos do MS4 — Stock Service (Grupo 16)
+// Baseado em: src/types/estoque.ts do plus_ms_estoque
+// ========================================
+
+export type TipoMovimento = 'entrada' | 'saida' | 'ajuste';
+
+export interface Estoque {
+  roupaId: string;
+  produtoId: string;
+  tamanho?: string;
+  cor?: string;
+  saldo: number;
+  atualizadoEm: string;
+}
+
+export interface Movimento {
+  id: string;
+  roupaId: string;
+  produtoId: string;
+  tipo: TipoMovimento;
+  quantidade: number;
+  saldoAnterior: number;
+  saldoPosterior: number;
+  observacao?: string;
+  criadoEm: string;
+}
+
+// ========================================
+// Tipos do MS1 — Product Service (Grupo 7)
+// Baseado em: swagger.yaml do Es2
+// ========================================
+
+export interface Product {
+  id: string;
+  nome: string;
+  descricao?: string;
+  marca?: string;
+  preco: number;
+  ativo: boolean;
+  categoriaId?: string | null;
+  fornecedorId?: string | null;
+  criadoEm: string;
+  atualizadoEm: string;
+  variantes?: Variant[];
+}
+
+export interface Variant {
+  id: string;
+  produtoId: string;
+  tamanhoId: string;
+  tamanho?: Size;
+  cor: string;
+  sku: string;
+  ativo: boolean;
+}
+
+export interface Size {
+  id: string;
+  nome: string;       // P, M, G, GG, XGG
+  descricao?: string;
+  ativo: boolean;
+}
+
+export interface PaginatedProductResponse {
+  items: Product[];
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+}
+
+// ========================================
+// Tipos internos do Report Service
+// ========================================
+
+export interface SalesByCategoryItem {
+  categoryId: string;
+  categoryName: string;
+  totalOrders: number;
+  totalItems: number;
+  totalRevenue: number;
+}
+
+export interface SalesBySizeItem {
+  size: string;
+  totalOrders: number;
+  totalItems: number;
+  totalRevenue: number;
+}
+
+export interface StockMovementSummary {
+  productId: string;
+  productName: string;
+  totalEntradas: number;
+  totalSaidas: number;
+  totalAjustes: number;
+  saldoAtual: number;
+}
+
+export interface ReportSummary {
+  totalSales: number;
+  totalOrders: number;
+  totalItemsSold: number;
+  averageTicket: number;
+  totalStockIn: number;
+  totalStockOut: number;
+}
+
+export interface ReportFilters {
+  startDate?: string;
+  endDate?: string;
+  categoryId?: string;
+  productId?: string;
+}
+
+export type ExportFormat = 'csv' | 'json' | 'pdf';
+export type ReportType = 'sales-by-category' | 'sales-by-size' | 'stock-movements';
