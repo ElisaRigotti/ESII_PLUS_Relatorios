@@ -24,14 +24,15 @@ Funcionalidades:
 - Exportação em CSV e PDF
 
 ## Estrutura do repositório
-
-├── docs/                   ADR do domínio
-├── plus-infra/             Docker Compose + Terraform (Ministack)
-├── plus-ms-auth/           MS Auth eleito (Grupo 7 — Python/FastAPI)
-├── plus-mfe-auth/          MFE Auth eleito (Grupo 7 — React)
-├── plus-ms-report/         MS9 — Report Service (Node/Express/TypeScript)
-├── plus-mfe-report/        MFE9 — Microfrontend de Relatórios (React/MUI)
-└── plus-shell/             Shell App (React + Module Federation)
+```text
+├── docs/                 # ADR do domínio
+├── plus-infra/           # Docker Compose + Terraform (Ministack)
+├── plus-ms-auth/         # MS Auth eleito (Grupo 7 — Python/FastAPI)
+├── plus-mfe-auth/        # MFE Auth eleito (Grupo 7 — React)
+├── plus-ms-report/       # MS9 — Report Service (Node/Express/TypeScript)
+├── plus-mfe-report/      # MFE9 — Microfrontend de Relatórios (React/MUI)
+└── plus-shell/           # Shell App (React + Module Federation)
+```
 
 ## Como rodar
 
