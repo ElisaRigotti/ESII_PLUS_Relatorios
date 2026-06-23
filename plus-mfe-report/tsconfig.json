@@ -14,8 +14,7 @@
     "strict": true,
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true
+    "noUnusedParameters": false
   },
   "include": ["src"]
 }

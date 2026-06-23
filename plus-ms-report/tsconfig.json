@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
-    "module": "nodenext",
-    "target": "esnext",
+    "module": "commonjs",
+    "target": "ES2020",
     "types": ["jest", "node"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
     "noUncheckedIndexedAccess": true,
     "strict": true,
-    "verbatimModuleSyntax": false,
-    "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true
   },
-  "exclude": ["eslint.config.mts", "dist", "test"]
+  "exclude": ["eslint.config.mts", "dist"]
 }

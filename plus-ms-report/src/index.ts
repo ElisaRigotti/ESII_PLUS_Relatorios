@@ -29,7 +29,7 @@ app.use('/reports', reportRoutes);
 
 // Swagger UI — documentação interativa da API
 try {
-  const openapiPath = join(__dirname, '..', 'openapi', 'openapi.yaml');
+  const openapiPath = join(process.cwd(), 'openapi', 'openapi.yaml');
   const openapiContent = readFileSync(openapiPath, 'utf-8');
 
   // Parse YAML manualmente (sem dependência extra) — swagger-ui-express
@@ -45,8 +45,8 @@ try {
     res.setHeader('Content-Type', 'text/yaml');
     res.send(openapiContent);
   });
-} catch {
-  console.warn('Swagger: openapi.yaml não encontrado, /docs desabilitado');
+} catch (e) {
+  console.error('Swagger erro:', e);
 }
 
 // Rota raiz redireciona para docs

@@ -4,7 +4,7 @@ import { fetchProducts } from '../clients/product-client';
 import { mockCategoryNames } from '../clients/mock-data';
 import type {
   SalesByCategoryItem, SalesBySizeItem, StockMovementSummary,
-  ReportFilters, Order, Product,
+  ReportFilters, Product,
 } from '../types';
 
 /**
